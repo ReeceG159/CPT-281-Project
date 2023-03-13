@@ -16,7 +16,8 @@ public:
 	class Iterator;
 
     // Term
-    class Term;
+    class Term; // Might not be needed
+    class TermNew; // Only need one and had difficulty making class Term work. Clean up later
 
 	// Constructors
 
@@ -60,9 +61,10 @@ private:
 
 	// Data fields
 
-	D_Node* head;		// Stores a pointer to the first node
-	D_Node* tail;	// Stores a pointer to the last node
-	size_t num_of_items; 	// Stores the number of elements in the list
+    D_Node* head;		    // Stores a pointer to the first node
+    D_Node* tail;	        // Stores a pointer to the last node
+    size_t num_of_items; 	// Stores the number of elements in the list
+    bool combine_terms(const T& item);
 };
 
 // Implementation of class "Polnomial_Addition"
@@ -169,13 +171,40 @@ void Polynomial_Addition<T>::push_front(const T& item) {
 // Adds an element to the rear end of the list.
 template<class T>
 void Polynomial_Addition<T>::push_back(const T& item) {
-    if (!(num_of_items++)) { head = tail = new D_Node(item); }
-    else {
-        tail->next = new D_Node(item);
-        tail->next->prev = tail;
-        tail = tail->next;
+    bool combined = false;
+    combined = combine_terms(item);
+    if (combined == false) {
+        if (!(num_of_items++)) { head = tail = new D_Node(item); }
+        else {
+            tail->next = new D_Node(item);
+            tail->next->prev = tail;
+            tail = tail->next;
+        }
     }
-} 
+}
+
+// Combines term if possible
+template<class T>
+bool Polynomial_Addition<T>::combine_terms(const T& item) {
+    bool combined = false;
+    D_Node* q = head;
+    while (q) {
+       if (q->data->expo == item->expo) {
+           if (q->data->coef + item->coef == 0) {
+               Iterator it = find(q->data);
+               erase(it);
+               combined = true;
+               break;
+           }
+           else {
+               q->data->coef = q->data->coef + item->coef;
+               combined = true; 
+           }
+        }
+        q = q->next;
+    }
+    return combined;
+}
 
 // Deletes the element at the front end of the list.
 template<class T>
@@ -220,11 +249,22 @@ void Polynomial_Addition<T>::clear() {
 
 // Adds togther two polynomials and inserts the result into a new list
 template<class T>
-Polynomial_Addition<T> Polynomial_Addition<T>:: operator + (const Polynomial_Addition<T>& other) const {
+Polynomial_Addition<T> Polynomial_Addition<T>:: operator + (const Polynomial_Addition<T>& rhs) const {
     Polynomial_Addition<T> result;
+    if (this != &rhs) {
+        if (rhs.num_of_items) {
+            D_Node* q = head;
+            // Add the rhs to the result list.  Terms are already combined.
+            result = rhs;
 
-    // Code goes here...
-
+            // add the lhs to the result list.  push_back combines terms.
+            while (q) {
+               T data = q->data;
+               result.push_back(data);
+                q = q->next;
+            }
+        }
+    }
     return result;
 }
 
@@ -486,5 +526,25 @@ template<class T>
 bool Polynomial_Addition<T>::Term:: operator == (const Term& other) const {
     return expo == other.expo;
 }
+
+class TermNew {
+public:
+    bool operator < (const TermNew&) const; // Tests to see if the right exponent is greater
+    bool operator == (const TermNew&) const; // Tests to see if exponents are equal
+    // Constructor
+    TermNew(int c, int e) {
+        coef = c;
+        expo = e;
+    }
+    int coef; // coefficient
+    int expo; // exponent
+    //friend class Polynomial_Addition<T>;
+
+private:
+    // Data fields
+   //int coef; // coefficient
+   // int expo; // exponent
+    //friend class Polynomial_Addition<T>;
+};
 
 #endif
