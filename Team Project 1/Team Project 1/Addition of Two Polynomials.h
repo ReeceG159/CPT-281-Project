@@ -16,8 +16,7 @@ public:
 	class Iterator;
 
     // Term
-    class Term; // Might not be needed
-    class TermNew; // Only need one and had difficulty making class Term work. Clean up later
+    class Term;
 
 	// Constructors
 
@@ -189,15 +188,17 @@ bool Polynomial_Addition<T>::combine_terms(const T& item) {
     bool combined = false;
     D_Node* q = head;
     while (q) {
-       if (q->data->expo == item->expo) {
-           if (q->data->coef + item->coef == 0) {
+       if (q->data->getexpo() == item->getexpo()) {
+           //if (q->data->coef + item->coef == 0) {
+           if (q->data->getcoef() + item->getcoef() == 0) {
                Iterator it = find(q->data);
                erase(it);
                combined = true;
                break;
            }
            else {
-               q->data->coef = q->data->coef + item->coef;
+               int m = q->data->getcoef() + item->getcoef();
+               q->data->setcoef(m);
                combined = true; 
            }
         }
@@ -244,9 +245,6 @@ void Polynomial_Addition<T>::clear() {
     num_of_items = 0;
 }  
 
-
-
-
 // Adds togther two polynomials and inserts the result into a new list
 template<class T>
 Polynomial_Addition<T> Polynomial_Addition<T>:: operator + (const Polynomial_Addition<T>& rhs) const {
@@ -267,9 +265,6 @@ Polynomial_Addition<T> Polynomial_Addition<T>:: operator + (const Polynomial_Add
     }
     return result;
 }
-
-
-
 
 // Stream insertion operator
 template<class T>
@@ -493,58 +488,59 @@ typename Polynomial_Addition<T>::Iterator Polynomial_Addition<T>::find(const T& 
 } 
 
 // A Term class
-template<class T>
-class Polynomial_Addition<T>::Term {
+//template<class T>
+class /*Polynomial_Addition<T>::*/Term {
 public:
     bool operator < (const Term&) const; // Tests to see if the right exponent is greater
     bool operator == (const Term&) const; // Tests to see if exponents are equal
 
+    // Constructor
+    Term(int c, int e) {
+        coef = c;
+        expo = e;
+    }
+
+    // Getters
+    int getcoef();
+    int getexpo();
+
+    // Setters
+    void setcoef(int);
+    void setexpo(int);
+
 private:
     // Data fields
     int coef; // coefficient
     int expo; // exponent
-    
-    // Constructor
-    Term(int, int);
-
-    friend class Polynomial_Addition<T>;
 };
 
-// Constructor of Term
-template<class T>
-Polynomial_Addition<T>::Term::Term(int coef, int expo) :
-    coef(coef), expo(expo) {}
-
 // Tests to see if the right exponent is greater
-template<class T>
-bool Polynomial_Addition<T>::Term:: operator < (const Term& other) const {
+bool Term:: operator < (const Term& other) const {
     return expo < other.expo;
 }
 
 // Tests to see if exponents are equal
-template<class T>
-bool Polynomial_Addition<T>::Term:: operator == (const Term& other) const {
+bool Term:: operator == (const Term& other) const {
     return expo == other.expo;
 }
 
-class TermNew {
-public:
-    bool operator < (const TermNew&) const; // Tests to see if the right exponent is greater
-    bool operator == (const TermNew&) const; // Tests to see if exponents are equal
-    // Constructor
-    TermNew(int c, int e) {
-        coef = c;
-        expo = e;
-    }
-    int coef; // coefficient
-    int expo; // exponent
-    //friend class Polynomial_Addition<T>;
+// Gets the coef
+int Term::getcoef() {
+    return coef;
+}
 
-private:
-    // Data fields
-   //int coef; // coefficient
-   // int expo; // exponent
-    //friend class Polynomial_Addition<T>;
-};
+// Gets the expo
+int Term::getexpo() {
+    return expo;
+}
 
+// Sets the coef
+void Term::setcoef(int c) {
+    coef = c;
+}
+
+// Sets the expo
+void Term::setexpo(int e) {
+    expo = e;
+}
 #endif

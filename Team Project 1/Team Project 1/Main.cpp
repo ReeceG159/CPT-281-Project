@@ -9,9 +9,9 @@ int main() {
 	int num = 0;	// Used for the user to pick the option from the menu
 	string polynomialterm;	// The first poylnomial as a string
 
-	Polynomial_Addition<TermNew*> poly_1;	// First polynomial as a list
-	Polynomial_Addition<TermNew*> poly_2;	// Second polynomial as a list
-	Polynomial_Addition<TermNew*> result;	// Result of the polynomial addition
+	Polynomial_Addition<Term*> poly_1;	// First polynomial as a list
+	Polynomial_Addition<Term*> poly_2;	// Second polynomial as a list
+	Polynomial_Addition<Term*> result;	// Result of the polynomial addition
 
 	// A menu system that allows the user to select their options
 	while (num != 5) {
@@ -47,7 +47,7 @@ int main() {
 					if (variable == false && polynomialterm_parse.size() > 0) {
 						// stoi is a string to integer converstion function
 						constant = stoi(polynomialterm_parse);
-						TermNew* term = new TermNew(constant, 0);
+						Term* term = new Term(constant, 0);
 						if (num == 1) {
 							poly_1.push_back(term);
 						}
@@ -72,7 +72,7 @@ int main() {
 					variable = false;
 					coeffienent = false;
 					exponent = false;
-					TermNew* term = new TermNew(poly_coefficient, poly_exponent);
+					Term* term = new Term(poly_coefficient, poly_exponent);
 					if (num == 1) {
 						poly_1.push_back(term);
 					}
@@ -112,7 +112,7 @@ int main() {
 						// no exponent
 						variable = false;
 						coeffienent = false;
-						TermNew* term = new TermNew(poly_coefficient, 1);
+						Term* term = new Term(poly_coefficient, 1);
 						if (num == 1) {
 							poly_1.push_back(term);
 						}
@@ -126,7 +126,7 @@ int main() {
 					// check if the last part of the polynomial is a constant
 					if (variable == false && coeffienent == false) {
 						constant = stoi(polynomialterm_parse);
-						TermNew* term = new TermNew(constant, 0);
+						Term* term = new Term(constant, 0);
 						if (num == 1) {
 							poly_1.push_back(term);
 						}
@@ -146,7 +146,7 @@ int main() {
 		}
 		// Shows the result
 		else if (num == 4) {
-//			cout << result << endl;
+			cout << result << endl;
 		}
 		// Allows the user to exit the loop
 		else if (num == 5) {
