@@ -25,12 +25,17 @@ int main() {
 		// Enter first polynomial
 		if (num == 1 || num == 2) {
 			if (num == 1) {
+				// This resets poly_1 so you can run multiple additions in one session.
+				poly_1.clear();
 				cout << "Enter the first polynomial: ";
 			}
 			else {
+				// This resets poly_2 so you can run multiple additions in one session.
+				poly_2.clear();
 				cout << "Enter the second polynomial: ";
 			}
 			cin >> polynomialterm;
+
 
 			int poly_coefficient = 1;
 			int poly_exponent = 1;
@@ -137,6 +142,12 @@ int main() {
 					}
 				}
 			}
+			if (num == 1) {
+				poly_1.Sort();
+			}
+			if (num == 2) {
+				poly_2.Sort();
+			}
 		}
 		
 		// Add the two polynomials
@@ -146,6 +157,7 @@ int main() {
 		}
 		// Shows the result
 		else if (num == 4) {
+			result.Sort();
 			cout << result << endl;
 		}
 		// Allows the user to exit the loop

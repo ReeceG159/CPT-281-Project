@@ -7,6 +7,7 @@
 using std::exception;
 using std::ostream;
 using std::to_string;
+using namespace std;
 
 // A doubly-linked list with iterators
 template<class T>
@@ -45,6 +46,7 @@ public:
 	void pop_front();  // Deletes the element at the front end of the list.
 	void pop_back();  // Deletes the element at the rear end of the list.
 	void clear();  // Deletes all the elements in the list.
+    void Sort();   // Sorts the double linked list
 
     Polynomial_Addition<T> operator + (const Polynomial_Addition<T>&) const; // Adds two polynomials together
 
@@ -245,6 +247,29 @@ void Polynomial_Addition<T>::clear() {
     num_of_items = 0;
 }  
 
+// Sorts the elements in the list.
+// Using a bubble sort algorithm in reverse to sort from greatest to least.
+template<class T>
+void Polynomial_Addition<T>::Sort() {
+    bool swapped;
+    struct D_Node* node1 = NULL;
+    struct D_Node* lnode = NULL;
+
+    do {
+        swapped = false;
+        node1 = head;
+        while (node1->next != lnode) {
+            if (node1->data->getexpo() < node1->next->data->getexpo()) {
+                std::swap(node1->data, node1->next->data);
+                swapped = true;
+                }
+            node1 = node1->next;
+        }
+        lnode = node1;
+    }
+    while (swapped);
+}
+
 // Adds togther two polynomials and inserts the result into a new list
 template<class T>
 Polynomial_Addition<T> Polynomial_Addition<T>:: operator + (const Polynomial_Addition<T>& rhs) const {
@@ -269,12 +294,25 @@ Polynomial_Addition<T> Polynomial_Addition<T>:: operator + (const Polynomial_Add
 // Stream insertion operator
 template<class T>
 ostream& operator << (ostream& out, const Polynomial_Addition<T>& li) {
+    bool first = true;
     for (typename Polynomial_Addition<T>::Iterator it = li.begin(); it != li.end(); it++) {
-        out << *it;
-        //if (it != li.end() - 1) { out << ", "; }
+        if (first == false) {
+            if ((*it)->getcoef() > 0) {
+                out << '+';
+            }
+        }
+        out << (*it)->getcoef();
+        if ((*it)->getexpo() != 0) {
+            out << 'x';
+        }
+        if ((*it)->getexpo() != 0 && (*it)->getexpo() != 1) {
+            out << '^';
+            out << (*it)->getexpo();
+        }
+        first = false;
     }
     return out;
-}  
+}
 
 // A list iterator
 template<class T>
@@ -493,6 +531,8 @@ class /*Polynomial_Addition<T>::*/Term {
 public:
     bool operator < (const Term&) const; // Tests to see if the right exponent is greater
     bool operator == (const Term&) const; // Tests to see if exponents are equal
+    bool operator > (const Term&) const; // Tests to see if the left exponent is greater
+    bool operator != (const Term&) const; // Tests to see if exponents not are equal
 
     // Constructor
     Term(int c, int e) {
@@ -518,6 +558,17 @@ private:
 bool Term:: operator < (const Term& other) const {
     return expo < other.expo;
 }
+
+// Tests to see if the left exponent is greater
+bool Term:: operator > (const Term& other) const {
+    return expo > other.expo;
+}
+
+// Tests to see if exponents not equal
+bool Term:: operator != (const Term& other) const {
+    return expo != other.expo;
+}
+
 
 // Tests to see if exponents are equal
 bool Term:: operator == (const Term& other) const {
